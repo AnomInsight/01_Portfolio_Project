@@ -1,0 +1,366 @@
+These are questions **you ask the customer**, then you write down the answers.
+
+Here is the logic:
+
+- **You** are the data scientist.
+- **You don't know** who uses the system or what they care about — that's domain knowledge the business owns.
+- **Your job** is to ask, listen, and translate the answers into requirements.
+
+So the flow is:
+
+1. You ask the customer → **"Who will use this system?"**
+2. Customer answers → **"Mailroom supervisors and the logistics operations team."**
+3. You ask → **"What do they care about most?"**
+4. Customer answers → **"Supervisors care about error rate and auditability. Logistics cares about throughput speed."**
+5. You write it down in your problem framing.
+
+---
+
+**Me (customer) answering now:**
+
+"There are three groups:
+
+1. **Mailroom staff** (front-line operators): They interact with the sorting belt. They don't care about the model at all — they just need the belt to not jam or produce obviously wrong results. They care about **reliability**. If the system routes incorrectly too often, they lose trust and start overriding it manually, which defeats the purpose.
+
+2. **Operations supervisors**: They monitor daily throughput and error rates. They care about **accuracy and auditability** — they need to see reports showing how many digits were flagged for manual review and why.
+
+3. **IT/infrastructure team**: They deploy and maintain the system. They care about **model size, inference speed, and deployment simplicity** — a 2GB model that needs a GPU server is a problem for them.
+
+Customers (senders) are indirect stakeholders. They care only that their mail arrives correctly and on time."
+
+---
+
+**Your takeaway as DS:**
+
+Write this into your Part A like:
+
+> "Key stakeholders are mailroom staff (reliability), operations supervisors (accuracy and error reporting), and the IT team (deployment simplicity and inference speed). Customer satisfaction is an indirect outcome."
+
+That one sentence shows you thought about the full picture, not just the model.
+
+---------------------------------------------------------------------------------------------------
+
+Absolutely. These two questions are there to force **real-world constraints** into your project, not just model performance.
+
+## 1) “What compute resources are available?”
+
+This means: **What hardware/time budget do you actually have to train and run the model?**
+
+Think in two phases:
+
+1. **Training resources**
+- Do you have only a laptop CPU?
+- Do you have a GPU?
+- How much RAM?
+- How long can training take (minutes vs hours)?
+
+2. **Inference resources**
+- Where will predictions run later?
+- On a server with strong hardware?
+- On a low-power machine?
+- Need real-time prediction or batch overnight?
+
+Why this matters:
+- A CNN may give better accuracy but need more compute/time.
+- Logistic regression may be slightly weaker but fast and cheap.
+- If compute is limited, simpler models are often better.
+
+Good way to answer in your project:
+- “Available resources: local laptop, CPU only, 16GB RAM, no dedicated GPU. Training should complete within 30 minutes; inference should be under 50ms per digit in batch mode.”
+
+That statement guides model choices and keeps scope realistic.
+
+---
+
+## 2) “Does the model need to be interpretable to staff?”
+
+This means: **Do humans need to understand why the model made a prediction?**
+
+Interpretability levels:
+1. **High interpretability needed**
+- Staff must trust and explain decisions.
+- You may prefer simpler or explainable models.
+- You include confusion patterns, example errors, feature importance, etc.
+
+2. **Low interpretability needed**
+- Only performance matters.
+- Black-box models (like deeper neural networks) may be acceptable.
+
+Why this matters:
+- In operations, if staff can’t trust outputs, they may ignore the model.
+- If mistakes happen, teams often ask: “Why did it predict this?”
+- Interpretable systems are easier to debug and improve.
+
+Good way to answer in your project:
+- “Moderate interpretability is required. Mailroom staff do not need math details, but operations team must understand common failure patterns (e.g., 4 vs 9 confusion) and confidence scores to decide when to send items for manual review.”
+
+---
+
+Quick rule of thumb:
+- **Compute question** = “Can we afford this model?”
+- **Interpretability question** = “Can people trust and operate this model?”
+
+If you want, I can help you write 2–3 polished sentences for these directly into your Part A response.
+
+
+------------------------------------------------------------------------------------------------------------
+
+
+Exactly right question.
+
+You are correct that in many real projects:
+- You train once (or periodically) on stronger rented hardware.
+- The business mostly cares about inference (running predictions).
+
+So in your case, “compute resources available” should include both, but **inference constraints are usually more critical** for business decisions.
+
+Use this framing in your writeup:
+
+1. Training environment
+- “We can rent GPU/CPU for training jobs.”
+- “Training can take longer (hours is acceptable).”
+- This means you can consider heavier models if needed.
+
+2. Inference environment
+- “The company only runs prediction in production.”
+- Define where it runs: cloud server CPU, edge device, etc.
+- Define required speed and cost per prediction.
+
+How to know the hardware if it is imaginary?
+- You set realistic assumptions and state them clearly.
+- Example assumption: “Inference runs on a standard cloud CPU instance, no GPU in production.”
+- Example SLA: “Prediction per digit must be < 20 ms and system available during business hours.”
+- Example cost constraint: “Prefer low-cost CPU inference over GPU serving.”
+
+That is enough for CRISP-DM Business Understanding. You are not proving hardware yet, you are defining constraints the model must respect.
+
+A good sentence you can paste:
+“We will use rented GPU resources for offline training, but production inference is assumed to run on CPU-only infrastructure; therefore, model selection must balance accuracy with low-latency, low-cost inference.”
+
+If you want, I can help you draft the full Part A answer (2–3 paragraphs) in your own voice next.
+
+
+------------------------------------------------------------------------------------------------------------
+
+Sure. I'll play the MailSort Inc. operations manager. I'll answer what the business knows, and flag where **you** need to make a decision as the data scientist.
+
+---
+
+## Me (Customer) Speaking:
+
+---
+
+**3b. Cost of false positive vs false negative?**
+
+"Look, from our side it's simple. Every digit in a ZIP code matters. A ZIP code has 5 digits. If even one digit is wrong, the envelope goes to the wrong sorting facility. So:
+
+- **False negative on 4** (real 4 predicted as something else): The envelope gets routed to the wrong ZIP code region. That costs us a redelivery, which averages about €3–5 per envelope, plus the customer complaint.
+- **False positive on 4** (real 2 predicted as 4): Same outcome. Wrong destination, same cost.
+
+From a business perspective, **both errors cost the same**: a misrouted envelope. We don't care which digit was confused with which. Any wrong prediction = wrong destination = money and reputation lost."
+
+---
+
+**3c. Are they equally bad or is one worse?**
+
+"Equally bad. We have no preference for precision over recall or vice versa. A wrong prediction is a wrong prediction. Get it right."
+
+→ **Your decision as DS:** This means you should target **high F1 per class** (balances precision and recall), not just accuracy. Note this in your writeup.
+
+---
+
+**4a. How fast does it need to run?**
+
+"Our sorting lines process about 200 envelopes per minute during peak hours. Each envelope has a 5-digit ZIP code, so that's 1000 digits per minute, roughly 17 digits per second. We want the system to run in **real-time alongside the conveyor belt**, so prediction per digit must be **under 30ms** on our production server. We cannot stop the belt to wait for a prediction."
+
+→ **Your decision as DS:** This rules out models that are slow at inference (e.g., very large neural networks without optimization). Note this constraint.
+
+---
+
+**4b. How much training data do we have or need?**
+
+"We don't have our own labeled data yet. We're starting with MNIST as a proxy. We have budget to label 2,000–3,000 of our own scanned envelope digits later if the model proves useful. For now, we need a working baseline on MNIST."
+
+→ **Your decision as DS:** You'll train on MNIST's 60,000 examples. Note that real deployment would need fine-tuning on domain-specific data (envelope scans). That's a known limitation to document.
+
+---
+
+**4c. What compute resources are available?**
+
+"Production runs on a standard Linux cloud server, CPU only, 8 cores, 32GB RAM. No GPU in production. We don't want GPU hosting costs for inference. Training can happen offline on whatever you need — that's your job to manage."
+
+→ **Your decision as DS:** Train on rented GPU, but the final model must be lightweight and fast on CPU. This is a constraint that may influence whether you pick logistic regression, random forest, or a small CNN over a large deep network.
+
+---
+
+**4d. Does the model need to be interpretable to staff?**
+
+"Our sorting staff don't need to understand the math. But our operations supervisor needs to be able to answer: 'Why is the error rate higher this week?' And if the model keeps confusing two digits, we need to know which ones and why, so we can escalate to manual review for those cases. So: **moderate interpretability**. We don't need full white-box, but we need error patterns to be explainable and auditable."
+
+→ **Your decision as DS:** This means you must include a confusion matrix and per-class report in your evaluation. A full black-box model is acceptable, but you must provide an error analysis layer on top of it.
+
+---
+
+**5a. A single number or multiple criteria?**
+
+"Give us one headline number for management (accuracy), but internally we expect your team to track per-digit performance. If overall accuracy is 96% but digit 8 recall is 60%, that's not acceptable — 8 appears in many ZIP codes."
+
+→ **Your decision as DS:** Primary metric = overall accuracy (≥95%). Secondary = per-digit recall (≥90% each). Both must be met.
+
+---
+
+**5b. Per-digit or overall accuracy?**
+
+"Both. Overall for reporting. Per-digit for quality assurance. If any single digit falls below threshold, the model is not ready for production, even if the overall looks good."
+
+→ **Your decision as DS:** Your success criteria table should have a row for overall accuracy AND a row for minimum per-digit recall.
+
+---
+
+## Summary of What You Now Have to Write
+
+| Question | Answer (from domain) | Your DS decision |
+|----------|----------------------|-----------------|
+| Cost of FP/FN | Both equally costly (~€3–5 per misrouted envelope) | Use F1, not just precision or recall |
+| FP vs FN severity | Equal | Balance both; F1 is appropriate |
+| Speed requirement | <30ms per digit, real-time | Lightweight model needed for inference |
+| Training data | MNIST 60k for now; own data later | Document domain gap as limitation |
+| Compute | CPU-only in production | Model must be deployable without GPU |
+| Interpretability | Moderate; error patterns must be auditable | Include confusion matrix + error analysis |
+| Success metric | ≥95% overall accuracy + ≥90% per-digit recall | Two criteria, both must be met |
+
+You now have enough to write your full Part A and Part B. Give it a go — start with the 2–3 paragraph problem framing, then fill the metrics table. When you have a draft, share it and I'll give you feedback as the customer.
+
+------------------------------------------------------------------------------------------
+
+As the customer, I would answer it like this:
+
+“We need the model to be reasonably robust to unusual handwriting, because real envelopes are messy. People write digits with different styles, slants, thickness, and spacing.  
+We do not expect perfect recognition of extremely unreadable digits, but we expect the system to handle common variation without failing.  
+If confidence is low on hard handwriting, the system should flag it for manual review instead of making a risky automatic decision.”
+
+Practical business requirement you can write from this:
+
+1. High performance on normal handwriting.
+2. Graceful handling of unusual cases through confidence-based fallback.
+3. No silent failures on low-quality inputs.
+
+You can add this sentence into your constraints section:
+
+“We require robustness to typical handwriting variation and a manual-review fallback for low-confidence predictions to avoid misrouting mail.”
+
+----------------------------------------------------------------------------------------------
+
+I’m going to clarify the business-analysis meaning of stakeholders and where ROI fits, because both are core to doing CRISP-DM like a real project rather than a modeling exercise.**Stakeholders** are the people or groups who are affected by the project, use the system, pay for it, approve it, maintain it, or live with its mistakes.
+
+For your mail-sorting example, typical stakeholders are:
+
+- **Operations manager**: cares about throughput, error rate, and whether the process actually gets faster.
+- **Mailroom staff / operators**: care that the system is reliable and easy to work with.
+- **IT / engineering team**: care about deployment, maintenance, compute cost, and stability.
+- **Business owner / sponsor**: cares about cost savings, service quality, and whether the project is worth funding.
+- **End customers**: indirectly affected because wrong predictions can delay deliveries.
+
+So when the guide asks “who are the stakeholders?”, it means:
+- Who has an interest in this project?
+- Who benefits if it works?
+- Who suffers if it fails?
+- Who decides whether it is accepted?
+
+That matters because different stakeholders care about different things:
+- operators want ease of use
+- managers want accuracy and speed
+- finance or leadership wants business value
+- IT wants something maintainable
+
+**About ROI:** yes, ROI belongs in Business Understanding. It does not need to be a full finance model, but you should absolutely think about business value.
+
+CRISP-DM starts with:
+- What problem are we solving?
+- Why is it worth solving?
+- How will the business benefit?
+
+That is basically where ROI lives.
+
+For an internal company project:
+- ROI is definitely your company’s concern.
+- As a data scientist, you should at least surface it.
+- You may not own the final finance numbers, but you should ask about them.
+
+For a client project:
+- It is still not “just their problem.”
+- You do not invent the business case alone, but you should ask for it and use it to guide the solution.
+- If the customer cannot explain the value, that is a project risk.
+
+A practical way to handle this in your portfolio project is:
+
+- **You do not need exact ROI math**
+- But you should include a simple business value statement such as:
+  - reduces manual sorting time
+  - lowers rerouting cost
+  - improves delivery accuracy
+  - reduces staff workload during peak periods
+
+A stronger version includes rough estimates, for example:
+- if manual review takes 3 seconds per digit and automation reduces that by 70%, daily labor time drops materially
+- if each misrouted envelope costs €3–5, reducing errors has direct savings
+
+So in your Business Understanding section, include something like:
+
+> “The main stakeholders are operations supervisors, mailroom staff, IT support, and business sponsors. Operations wants higher throughput and fewer routing errors, staff need a reliable and usable system, IT requires low-cost deployment, and business sponsors care about whether the system reduces labor cost and misrouting cost enough to justify implementation.”
+
+And for ROI/business value:
+
+> “Although exact ROI is not yet quantified, the project is expected to reduce manual sorting effort, decrease the cost of misrouted envelopes, and improve operational efficiency during peak mail volume.”
+
+Short answer:
+- **Stakeholders** = everyone who matters to the project outcome.
+- **ROI** = yes, it belongs in Business Understanding.
+- **You don't need perfect ROI numbers**, but you should show that the project has business value and ask the right questions.
+
+If you want, I can next help you write a **clean stakeholder + business value paragraph** for your notebook in your own portfolio style.
+
+---------------------------------------------------------------------------------------
+
+No. Not if you ask them well.
+
+This is not being intrusive, this is doing proper discovery. In Business Understanding, questions like stakeholders, costs of errors, operational constraints, business value, and ROI are normal because without them you are not solving a business problem, you are just building a model.
+
+What *would* feel intrusive is:
+- asking for sensitive financial details too early,
+- demanding precise ROI numbers before the problem is even framed,
+- pushing on confidential topics without explaining why you need the information.
+
+A good standard is:
+
+- Ask for the **decision-shaping version** first.
+- Ask for exact numbers only if they are truly needed later.
+
+So instead of:
+- “Give me the exact annual financial loss from this problem.”
+
+Ask:
+- “Is this problem costly enough that reducing it would matter to the business?”
+- “Do wrong predictions mainly cost time, money, customer trust, or compliance risk?”
+- “Do you already track any KPIs related to this?”
+
+That keeps it professional and low-friction.
+
+A useful rule:
+
+- **Early phase**: ask qualitative questions and rough ranges.
+- **Later phase**: ask quantitative questions if they affect design or prioritization.
+
+For example:
+- early: “Are errors expensive?”
+- later: “Is the average cost per error closer to €1, €10, or €100?”
+
+That is normal, not intrusive.
+
+Also, asking these questions often makes you look more senior, because it shows you are connecting the technical work to business outcomes.
+
+A good mindset is:
+- “I’m not asking out of curiosity.”
+- “I’m asking because the answer changes what I build.”
+
+If you want, I can help you turn the ROI/stakeholder questions in the guide into a softer, more client-friendly wording so they sound more natural in real conversations.

@@ -1,0 +1,291 @@
+I’m going to inspect the repo state briefly so I can tailor the guidance to what exists here, then I’ll give you a CRISP-DM walkthrough for an MNIST portfolio project focused on learning rather than handing you code.
+
+Read [](file:///c%3A/ML_Projects/_portfolio_project_01)
+
+Read memory
+
+Yes. The right way to use this project is not “train MNIST and move on,” but to treat it like a real end-to-end data science project with decisions, tradeoffs, documentation, and reflection. MNIST is simple enough to learn from, but rich enough to practice the full CRISP-DM cycle well.
+
+**How To Frame It**
+Your imaginary business scenario should not be “classify digits because MNIST exists.” Give it an operational context. For example: a mail-processing company wants to automatically read handwritten ZIP-code digits from scanned envelopes to reduce manual sorting time. That turns MNIST into a business problem instead of just a Kaggle-style exercise.
+
+Your goal is then no longer “get the best accuracy,” but something more realistic:
+- Build a handwritten digit classifier that is accurate, reliable, explainable enough for a portfolio project, and documented like a professional DS workflow.
+- Show how you make decisions at each stage.
+- Show what can go wrong, not just the final result.
+
+**CRISP-DM Walkthrough**
+
+**1. Business Understanding**
+Start here before touching the data.
+
+Ask yourself:
+- What problem is the model solving?
+- Who uses the predictions?
+- What happens if the model is wrong?
+- What metric matters in practice?
+- What constraints exist: speed, interpretability, compute, deployment simplicity?
+
+For MNIST in your scenario:
+- Business objective: reduce manual effort in digit recognition from scanned handwritten inputs.
+- Data science objective: classify digits 0–9 with high accuracy and acceptable inference speed.
+- Success criteria: for example, high overall accuracy plus strong per-class recall, with limited confusion between similar digits like 4 and 9 or 3 and 5.
+- Risks: bad handwriting, noisy inputs, unusual writing styles, class confusions.
+
+What to produce:
+- A one-page problem definition.
+- Assumptions and non-goals.
+- A list of business risks if the model fails.
+
+What not to do:
+- Don’t begin by choosing a neural network.
+- Don’t optimize metrics before defining why they matter.
+- Don’t say “accuracy is enough” without justifying it.
+
+**2. Data Understanding**
+Now study the dataset like an analyst, not just a model builder.
+
+Questions to answer:
+- How many samples are there?
+- What is the shape of each image?
+- Are classes balanced?
+- What do examples from each class look like?
+- Are there ambiguous or low-quality samples?
+- Are there duplicates or near-duplicates?
+- Are some digits systematically harder than others?
+
+For MNIST, explore:
+- Image dimensions and grayscale scale.
+- Class counts.
+- Sample images per digit.
+- Mean and variance of pixel intensities.
+- Typical mistakes a human might make when looking at hard examples.
+
+Good analyses:
+- Show several examples per class.
+- Look at class balance.
+- Inspect “weird” images manually.
+- Summarize what makes this dataset easy and what makes it still nontrivial.
+
+What to produce:
+- Short EDA notes.
+- Visual examples.
+- Initial hypotheses, such as: “Digits with similar stroke shapes will likely confuse the model.”
+
+What not to do:
+- Don’t jump straight from loading data to training.
+- Don’t assume clean benchmark datasets require no inspection.
+- Don’t only report dataset size and shape.
+
+**3. Data Preparation**
+This is where you define exactly what enters the model.
+
+Think through:
+- How will you split train, validation, and test?
+- Will you normalize pixel values?
+- Will you flatten images or preserve spatial structure?
+- Will you engineer any features, or use raw pixels?
+- How will you avoid leakage?
+
+For learning purposes, test multiple representations:
+- Raw flattened pixels for simple models.
+- Structured image format for CNN-style models later.
+- Possibly compare unscaled vs normalized inputs to understand why preprocessing matters.
+
+Important habits:
+- Keep preprocessing reproducible.
+- Separate fit-only-on-train transformations from anything applied to validation/test.
+- Document every transformation and why it exists.
+
+What to produce:
+- A clear preprocessing pipeline description.
+- Rationale for train/validation/test split.
+- Notes on why normalization helps.
+
+What not to do:
+- Don’t normalize using information from the full dataset before splitting if the method depends on dataset-wide statistics.
+- Don’t change preprocessing halfway through experiments without recording it.
+- Don’t create many transformations just because you can.
+
+**4. Modeling**
+This is where many beginners over-focus. Treat modeling as a comparison exercise, not a race to the fanciest architecture.
+
+Use a progression:
+1. Dummy baseline
+2. Simple linear model
+3. Classical ML model
+4. More advanced image-aware model if justified
+
+A strong learning path is:
+- Baseline 1: random or majority-class logic, just to establish a floor.
+- Baseline 2: logistic regression on flattened pixels.
+- Baseline 3: maybe a tree-based or SVM-style approach if computationally reasonable.
+- Baseline 4: a CNN, only after you understand why preserving image structure matters.
+
+What to learn from each:
+- Dummy baseline teaches why a baseline exists.
+- Logistic regression teaches linear separability and preprocessing.
+- SVM or another classical model teaches margin-based classification and tradeoffs.
+- CNN teaches inductive bias for image problems.
+
+Questions to ask for every model:
+- Why this model?
+- What assumptions does it make?
+- What preprocessing does it need?
+- How expensive is it to train?
+- How interpretable is it?
+- Where will it fail?
+
+What to produce:
+- A model comparison table.
+- For each model: objective, assumptions, key hyperparameters, results, pros/cons.
+
+What not to do:
+- Don’t start with a CNN because “that’s what works on MNIST.”
+- Don’t tune dozens of hyperparameters blindly.
+- Don’t compare models with inconsistent preprocessing or inconsistent validation procedures.
+
+**5. Evaluation**
+This is where the project becomes professional.
+
+Do not stop at “test accuracy = X%”.
+
+Evaluate:
+- Overall accuracy
+- Per-class precision/recall/F1
+- Confusion matrix
+- Hard examples and failure modes
+- Confidence behavior, if available
+- Inference speed and model size if you want stronger portfolio depth
+
+For MNIST, your evaluation should answer:
+- Which digits are most commonly confused?
+- Are there certain handwriting styles the model struggles with?
+- Does a higher-complexity model materially improve the cases that matter?
+- Is the improvement worth the added complexity?
+
+Very strong portfolio behavior:
+- Show the misclassified examples.
+- Group errors into categories.
+- Explain why those mistakes happen.
+- Discuss whether the model is “good enough” for the imaginary business case.
+
+What to produce:
+- Evaluation section with charts and interpretation.
+- Error analysis section.
+- Final recommendation: which model you would actually choose and why.
+
+What not to do:
+- Don’t report only one metric.
+- Don’t hide failure cases.
+- Don’t choose the highest-scoring model without discussing tradeoffs.
+
+**6. Deployment**
+Even if you do not fully deploy, think like you would.
+
+Ask:
+- How would this model be used in production?
+- What is the input contract?
+- What preprocessing must happen at inference time?
+- What should happen when confidence is low?
+- How would you monitor drift or degraded performance?
+
+For an MNIST portfolio project, deployment can stay lightweight:
+- A simple prediction interface.
+- A notebook or script that loads the model and predicts a new handwritten image.
+- A short design note describing how this would work in a real service.
+
+What to discuss:
+- Input validation.
+- Versioning of model and preprocessing.
+- Retraining strategy.
+- Monitoring for unusual new handwriting styles.
+
+What not to do:
+- Don’t pretend deployment is only “save model to file.”
+- Don’t ignore operational concerns.
+- Don’t assume training-time preprocessing magically happens in production.
+
+**7. Documentation and Reflection**
+This is what makes it a portfolio project instead of a tutorial copy.
+
+Your final project should explain:
+- The problem
+- The dataset
+- The workflow
+- The model comparison
+- The failures
+- The final decision
+- What you would improve next
+
+A hiring manager often learns more from your reasoning than from your score.
+
+Include:
+- Why you chose the final model
+- What you intentionally did not do
+- What limitations remain
+- What your next iteration would be
+
+**What A Strong Project Structure Looks Like**
+Even without writing code now, think in terms of this shape:
+- `README` with business framing and results
+- `notebooks/` for EDA and experiments
+- `src/` for reusable logic once you start coding later
+- `reports/` for figures, confusion matrix, and summary
+- `models/` for saved artifacts if you get there
+
+For learning, keep notebooks for exploration, but move reusable logic into modules once it becomes real project code. That is an important professional habit.
+
+**A Good Learning Roadmap**
+If you want to learn a lot, do the project in this order:
+
+1. Write the business problem and success criteria.
+2. Explore the dataset visually and statistically.
+3. Build a dumb baseline.
+4. Build a simple real baseline like logistic regression.
+5. Evaluate deeply.
+6. Add a more advanced model only after you understand the baseline failures.
+7. Compare models honestly.
+8. Write a final recommendation.
+9. Add a lightweight deployment concept.
+10. Reflect on limitations and next steps.
+
+This sequence teaches more than jumping directly to a deep learning model.
+
+**How To Think Like A Data Scientist While Doing It**
+At every stage, keep asking:
+- What assumption am I making?
+- How do I verify it?
+- What would make this conclusion unreliable?
+- Is this choice improving the project, or just making it more complicated?
+- If I had to explain this to a non-technical stakeholder, what would I say?
+
+That mindset is more valuable than MNIST itself.
+
+**Common Beginner Mistakes To Avoid**
+- Treating CRISP-DM as a formality instead of the actual workflow.
+- Starting with models before defining the business objective.
+- Using only accuracy.
+- Ignoring error analysis.
+- Doing lots of tuning without understanding baseline behavior.
+- Mixing exploration and reusable project logic into one giant notebook.
+- Not documenting decisions.
+- Presenting only the best result and hiding the dead ends.
+
+**What “Good” Looks Like For This Portfolio Project**
+A strong final outcome is not “I reached 99%.” A strong outcome is:
+
+- You framed a realistic problem.
+- You used CRISP-DM explicitly.
+- You compared simple and advanced approaches.
+- You evaluated beyond a single metric.
+- You analyzed errors thoughtfully.
+- You documented decisions and tradeoffs.
+- You showed how the project could move toward production.
+
+That reads as junior data scientist with discipline, not just someone following a tutorial.
+
+If you want, the next step I can do is one of these:
+1. Help you turn this into a concrete project plan with milestones and weekly tasks.
+2. Help you write the business scenario, problem statement, and success metrics for your README.
+3. Help you design the notebook and folder structure so you can start the project yourself.

@@ -1,0 +1,65 @@
+Problem framing:
+	- Core problem
+	- Who are the stakeholders? -> who will use it, pay for it, approve it, maintain it or live with its mistakes?
+	- What happens if the model is wrong?
+	- What are the constraints?
+		○ How fast does it need to run? (real-time, batch, offline)
+		○ How much training data do we have or need?
+		○ What compute resources are available?
+		○ Does the model need to be interpretable to staff? (glass-box)
+	- What would success look like?
+		○ A single number (e.g. 95% accuracy) Or multiple criteria?
+		○ Overall accuracy? Something else?
+
+Part A.1: Business Value and ROI
+
+Benefit description
+	○ Estimated benefit (euro)
+	○ Estimated effort (euro)
+		○ ROI
+
+1. Why is this project worth doing from a business perspective?
+   - Does it reduce cost, save time, improve quality, reduce risk, or increase revenue?
+   - What process is expected to improve if the solution works?
+
+2. How would the business benefit be described?
+   - Time saved per task?
+   - Lower error rates?
+   - Less manual work?
+   - Better customer experience?
+
+3. Is ROI expected to be estimated?
+   - You do not need exact numbers at the start.
+   - A rough estimate or qualitative statement of value is often enough in early discovery.
+
+4. Who owns the business case?
+   - Product owner or department lead?
+   - If exact numbers are unavailable, note that as an assumption or something to validate later.
+
+		
+Success Criteria and Metrics:
+	- Metrics definition
+		○ Primary metrics ->
+			§ Which metric matters most?
+			§ Accuracy? Precision? Recall? F1?
+		○ Acceptable threshold -> 
+			What value of the primary metric is "good enough"?
+			   - 90%? 95%? 99%?
+			   - Why that number? Is it realistic?
+		○ Secondary metrics -> 
+			What else matters?
+			   - Inference speed?
+			   - Model size?
+			   - Interpretability?
+		○ Trade-off questions (accuracy 1% up, training time doubled or requires 10x more data to train)
+
+Assumptions and Risks
+	- List assumptions about the problem -> Which assumptions might be wrong?
+	- Risks
+		○ If these assumptions break, what happens?
+
+Non-Goals
+	- What are we NOT trying to do? -> (e.g.: NOT trying to achieve 99.5% accuracy (that's beyond learning project scope))
+
+Summary
+Write a one-paragraph summary of the problem
