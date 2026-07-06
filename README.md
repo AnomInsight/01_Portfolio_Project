@@ -1,158 +1,88 @@
-# Portfolio Project: Handwritten Digit Recognition (MNIST)
+# MNIST Handwritten Digit Classifier (Portfolio Project)
 
-## Business Scenario
+End-to-end machine learning case project that frames digit recognition as a real business problem in mail sorting, then solves it using a structured CRISP-DM workflow.
 
-**Company:** MailSort Inc., a mail automation and logistics company  
-**Problem:** Manually reading and sorting handwritten ZIP codes from scanned envelopes is time-consuming and error-prone.  
-**Goal:** Build an automated handwritten digit classifier to reduce manual effort and accelerate sorting workflows.
+## Why This Project
 
-### Business Objectives
-- Automate digit recognition from scanned handwritten ZIP codes.
-- Reduce manual intervention, improving throughput.
-- Maintain high reliability (avoid misclassifications that lead to misdirected mail).
+Manual reading of handwritten ZIP code digits is slow and error-prone in high-volume mail operations. This project evaluates whether a machine learning pipeline can classify digits reliably enough to reduce manual workload while keeping routing risk low.
 
-### Data Science Objectives
-- Build a classifier for digits 0–9 with high accuracy and per-digit precision/recall.
-- Understand which digits are inherently harder to classify and why.
-- Produce a model that is accurate, interpretable, and deployable.
+## At a Glance
 
-### Success Criteria
-- Overall test accuracy ≥ 95%.
-- Per-digit recall ≥ 90% (minimize false negatives; misdirected mail is costly).
-- Inference time acceptable for batch processing (preferably milliseconds per digit).
-- Clear documentation of failure modes and tradeoff analysis.
+- Goal: classify digits 0-9 from grayscale images with strong per-class performance.
+- Methodology: CRISP-DM (business framing -> data understanding -> prep -> modeling -> evaluation).
+- Stack: Python, NumPy, pandas, scikit-learn, matplotlib, seaborn.
+- Portfolio focus: model comparison, error analysis, and business-facing recommendations.
 
-### Non-Goals
-- Achieve state-of-the-art accuracy (this is a learning project).
-- Deploy to production (but design as if we will).
-- Solve segmentation or localization of digits in a full envelope image.
+## Results Snapshot
 
----
+Detailed metrics are documented in the full case study:
 
-## Project Structure
+- [Case_Study_MNIST_Digit_Classifier.md](Case_Study_MNIST_Digit_Classifier.md)
 
-```
+Summary of the reported progression:
+
+- Dummy baseline: ~10%
+- Logistic Regression: 91.65%
+- Random Forest: 96.87%
+- SVM (RBF): 98.36%
+- CNN (selected in case study): 99.27%
+
+## Repository Contents
+
+```text
 .
-├── README.md                      # This file
-├── notebooks/                     # Jupyter notebooks for exploration and learning
-│   ├── 01_business_understanding.ipynb
-│   ├── 02_data_understanding.ipynb
-│   ├── 03_data_preparation.ipynb
-│   ├── 04_modeling_baseline.ipynb
-│   ├── 05_modeling_advanced.ipynb
-│   └── 06_evaluation_and_analysis.ipynb
-├── src/                           # Reusable Python modules
-│   ├── __init__.py
-│   ├── data/                      # Data loading and preprocessing
-│   ├── features/                  # Feature engineering (if applicable)
-│   ├── models/                    # Model definitions and utilities
-│   └── evaluation/                # Evaluation metrics and analysis
-├── data/                          # Data storage
-│   ├── raw/                       # Original MNIST data
-│   ├── processed/                 # Cleaned and prepared data
-│   └── predictions/               # Model predictions for analysis
-├── reports/                       # Outputs: figures, tables, analysis
-│   └── figures/
-├── models/                        # Trained model checkpoints
-├── pyproject.toml                 # Project dependencies and metadata
-├── .gitignore                     # Git ignore rules
-└── CRISP_DM_LOG.md               # Your journal of decisions
+├── README.md
+├── Case_Study_MNIST_Digit_Classifier.md
+├── pyproject.toml
+├── uv.lock
+├── src/
+│   ├── 01_data_load.py
+│   ├── 02_data_preparation.py
+│   ├── 03_baseline_model.py
+│   ├── 04_dummy_baseline.py
+│   ├── 05_Log_reg.py
+│   └── 06_rand_for.py
+├── reports/
+└── my_notes/
 ```
 
----
+## Quick Start
 
-## CRISP-DM Workflow
+### 1. Environment setup
 
-This project follows the **CRISP-DM** (Cross-Industry Standard Process for Data Mining) methodology:
-
-1. **Business Understanding** → Framing the problem, defining success metrics.
-2. **Data Understanding** → Exploratory analysis of MNIST dataset.
-3. **Data Preparation** → Preprocessing, splitting, normalization.
-4. **Modeling** → Building and comparing baseline and advanced models.
-5. **Evaluation** → Comprehensive evaluation, error analysis, and recommendation.
-6. **Deployment** → Designing a production-ready inference pipeline (conceptual for this project).
-
-Each phase has a corresponding notebook. Move through them sequentially; use your learnings from earlier phases to inform later decisions.
-
----
-
-## How to Use This Project
-
-### Start Here
-1. Read this README to understand the business context.
-2. Open `notebooks/01_business_understanding.ipynb` and fill in your problem framing.
-3. Progress to notebook 02 once you've formalized the problem.
-
-### Key Learning Habits
-- **Document decisions:** Write down *why* you make choices, not just what you do.
-- **Experiment intentionally:** Change one thing at a time; compare results.
-- **Analyze failures:** Misclassifications are learning opportunities.
-- **Avoid peeking:** Don't use test data until the evaluation phase.
-- **Keep it reproducible:** Use seeds, version dependencies, save preprocessing pipelines.
-
-### When to Move Code to `src/`
-Once a notebook cell becomes reusable (e.g., a preprocessing function, a model wrapper, an evaluation metric), move it to `src/` and import it back. This habit keeps your notebooks clean and your code modular.
-
----
-
-## Dependencies
-
-See `pyproject.toml` for the full list. Key packages:
-- `numpy`, `pandas` → data manipulation
-- `scikit-learn` → classical ML models and preprocessing
-- `matplotlib`, `seaborn` → visualization
-- `jupyter`, `ipykernel` → notebooks
-
-Install with:
 ```bash
 uv venv
-source .venv/Scripts/activate  # Windows
-uv pip install -r requirements.txt
+.venv\Scripts\activate
+uv sync
 ```
 
----
+### 2. Run scripts
 
-## Expected Timeline
+From the project root, run any stage script in `src/`:
 
-This is a self-paced learning project. Expect:
-- Phases 1–3 (Business, Data, Prep): ~2–3 hours
-- Phases 4–5 (Modeling & Evaluation): ~3–5 hours
-- Phase 6 (Deployment/Reflection): ~1–2 hours
+```bash
+python src/01_data_load.py
+python src/02_data_preparation.py
+python src/03_baseline_model.py
+python src/04_dummy_baseline.py
+python src/05_Log_reg.py
+python src/06_rand_for.py
+```
 
-**Total:** ~8–12 hours for a thorough portfolio project.
+## Project Navigation
 
----
+- Start with this README for a fast portfolio overview.
+- Read the complete story in [Case_Study_MNIST_Digit_Classifier.md](Case_Study_MNIST_Digit_Classifier.md).
+- Check `reports/` for outputs and analysis artifacts.
 
-## Deliverables
+## Portfolio Positioning
 
-By the end, you should have:
-- ✅ Completed notebooks (01–06) with code and analysis.
-- ✅ A model comparison table in `reports/`.
-- ✅ Error analysis and confusion matrix in `reports/`.
-- ✅ A saved baseline and advanced model in `models/`.
-- ✅ A README summary explaining your decisions and tradeoffs.
-- ✅ A `CRISP_DM_LOG.md` documenting key decisions and learnings.
+For GitHub portfolios, the strongest structure is:
 
-This becomes your portfolio piece.
+1. README as a short recruiter-friendly landing page.
+2. Case study as the deep technical and business narrative.
 
----
-
-## Learning Checklist
-
-As you progress, check off these milestones:
-
-- [ ] Business problem is clearly defined in notebook 01.
-- [ ] Dataset is explored, visualized, and understood in notebook 02.
-- [ ] Data preprocessing pipeline is designed and documented in notebook 03.
-- [ ] Baseline model (logistic regression or similar) is built and evaluated.
-- [ ] Advanced model is built and compared against baseline.
-- [ ] Evaluation includes per-class metrics, confusion matrix, and error analysis.
-- [ ] Misclassifications are analyzed and explained.
-- [ ] Final recommendation is documented with pros/cons of each approach.
-- [ ] Deployment considerations are discussed (even if not fully implemented).
-- [ ] All decisions are logged in `CRISP_DM_LOG.md`.
-
----
+This repository follows that pattern.
 
 ## References
 

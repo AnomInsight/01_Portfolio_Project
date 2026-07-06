@@ -1,6 +1,5 @@
 README.md
 pyproject.toml
-src/data_load.py
 src/mnist_portfolio_project.egg-info/PKG-INFO
 src/mnist_portfolio_project.egg-info/SOURCES.txt
 src/mnist_portfolio_project.egg-info/dependency_links.txt

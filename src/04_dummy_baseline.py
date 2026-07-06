@@ -8,12 +8,14 @@ from sklearn.metrics import accuracy_score, confusion_matrix, recall_score
 def random_baseline(num_samples, num_classes):
     return np.random.randint(0, num_classes, size=num_samples)
 
+# %%
 # Baseline 2: Always predict the most frequent class
 def most_frequent_baseline(labels):
     from collections import Counter
     most_common = Counter(labels).most_common(1)[0][0]
     return np.full(len(labels), most_common)
 
+# %%
 # Evaluate the performance of the baselines using accuracy
 
 # Example true labels
