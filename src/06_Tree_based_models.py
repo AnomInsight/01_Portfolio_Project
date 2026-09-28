@@ -1,9 +1,13 @@
 # %%
+import os
 import numpy as np
 import idx2numpy
 import matplotlib.pyplot as plt
 import seaborn as sns
 import time
+
+FIG_DIR = "../reports/figures"
+os.makedirs(FIG_DIR, exist_ok=True)
 
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
@@ -118,6 +122,7 @@ plt.xlabel('Importance')
 plt.ylabel('Feature Index')
 plt.title('Top 20 Feature Importances')
 plt.gca().invert_yaxis()  # highest importance at top
+plt.savefig(f"{FIG_DIR}/rf_top20_feature_importance_bar.png", dpi=200, bbox_inches="tight")
 plt.show()
 
 # %%
@@ -129,6 +134,7 @@ plt.colorbar()
 plt.title("Random Forest Pixel Importances")
 plt.axis("off")
 plt.tight_layout()
+plt.savefig(f"{FIG_DIR}/rf_pixel_importance_heatmap.png", dpi=200, bbox_inches="tight")
 plt.show()
 
 # --------------------------------------------------
@@ -142,6 +148,7 @@ sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
 plt.xlabel('Predicted')
 plt.ylabel('True')
 plt.title('Confusion Matrix')
+plt.savefig(f"{FIG_DIR}/rf_confusion_matrix_val.png", dpi=200, bbox_inches="tight")
 plt.show()
 
 cm_off =cm.copy()
@@ -179,5 +186,6 @@ for ax, idx in zip(axes.flat, pick):
 
 plt.suptitle("Random Forest Misclassified Validation Examples")
 plt.tight_layout()
+plt.savefig(f"{FIG_DIR}/rf_misclassified_examples.png", dpi=200, bbox_inches="tight")
 plt.show()
 # %%

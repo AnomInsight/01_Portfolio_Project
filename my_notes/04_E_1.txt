@@ -1,0 +1,28 @@
+Top 5 misclassifications (true, pred):
+True: 3, Predicted: 2, Count: 19
+True: 4, Predicted: 9, Count: 19
+True: 3, Predicted: 8, Count: 18
+True: 9, Predicted: 3, Count: 15
+True: 7, Predicted: 2, Count: 14
+
+Directionality check:
+3->2: 19 vs 2->3: 4
+4->9: 19 vs 9->4: 6
+3->8: 18 vs 8->3: 8
+9->3: 15 vs 3->9: 7
+7->2: 14 vs 2->7: 4
+
+No clear directionality in misclassifications, suggesting that the model is not consistently confusing specific pairs of classes.
+
+In case of some errors some 7s and 9s are confusing with human eye also, so this is not surprising. 
+The model may be picking up on subtle features that are shared between these classes, leading to misclassifications. 
+This could be an area for further investigation, 
+such as looking at the specific images that were misclassified to see if there are common patterns or features that are causing confusion.
+
+The most frequent confusions involve digit 3 (19 errors as 3→2, 18 as 3→8), 
+suggesting 3 lacks distinctive visual features. 
+The model confuses the curved strokes of 3 with 2, 8, and 9. 
+Notably, confusion is asymmetric: 3 is mistaken for 2 much more (19 vs 4) than vice versa, 
+indicating that 2's features are more distinctive than 3's. 
+Additionally, 4 and 9 are confused symmetrically (19 vs 6), likely due to shared stem structure. 
+These errors suggest the model cannot reliably separate digits with overlapping curved strokes—a limitation of Random Forest's inability to learn spatial structure that a CNN would capture.

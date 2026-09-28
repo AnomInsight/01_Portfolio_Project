@@ -112,6 +112,7 @@ for digit, ax in enumerate(axes.flat):
 
 fig.colorbar(im, ax=axes, shrink=0.85)
 fig.suptitle("Pixel Importance per Digit")
+plt.savefig("../reports/figures/lr_pixel_importance_per_digit.png", dpi=200, bbox_inches="tight")
 plt.show()
 
 # Recall
@@ -128,5 +129,6 @@ sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', cbar=True)
 plt.title("Confusion Matrix")
 plt.xlabel("Predicted Label")
 plt.ylabel("True Label")
+plt.savefig("../reports/figures/lr_confusion_matrix_val.png", dpi=200, bbox_inches="tight")
 plt.show()
 # %%

@@ -1,0 +1,7 @@
+Model                   Train Accuracy  Test Accuracy  Validation Accuracy   Precision    Recall  F1-score Training Time (s)  Notes
+Random                  0.2             0.2            0.2                   0.2          0.2                                 Baseline model with default hyperparameters.
+Most Frequent Class     0.4             0.4            0.4                   0.4          0.4                                 Always predicts the most frequent class, serves as a sanity check.
+Logistic Regression     0.9401          0.9234         0.9213                0.92         0.92    0.915     187.45            Linear model, may struggle with complex patterns.
+Random Forest           0.9998          0.9686         0.9686                0.97         0.97    0.968     9.71              Ensemble of decision trees, captures non-linear relationships well.
+
+The Random Forest is the best of these models with 5-6% improvement in performance compared to Logistic Regression, while also maintaining good generalization to unseen data. The training time is also much faster than Logistic Regression, which is a nice bonus.
