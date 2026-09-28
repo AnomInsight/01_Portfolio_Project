@@ -33,7 +33,6 @@ Python 3.11-3.13, NumPy, pandas, SciPy, scikit-learn, TensorFlow/Keras, Matplotl
 
 ```text
 .
-├── 0_utils/                         # Image, MNIST, evaluation, and general ML helpers
 ├── Case_Study_MNIST_Digit_Classifier.md
 ├── my_notes/                        # Project notes and working material
 ├── notebooks/                       # Markdown guides for CRISP-DM phases
