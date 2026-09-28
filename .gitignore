@@ -28,6 +28,7 @@ env/
 
 # Local data and temporary output
 data/
+0_utils/
 my_notes/
 models/
 reports/figures/
